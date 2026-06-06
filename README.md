@@ -139,7 +139,7 @@ You will need active accounts and API credentials for the following services:
 * Custom Email Verifier API (Hosted on Railway)
 
 ### Import the Workflow
-1. Download the `workflow.json` file from this repository.
+1. Download the `Advance AI-Powered Lead Management System.json` file from this repository.
 2. Open your n8n workspace.
 3. Click on **Add Workflow** > **Import from File**.
 4. Select the downloaded JSON file.
