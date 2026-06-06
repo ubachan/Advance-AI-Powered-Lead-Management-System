@@ -1,0 +1,1165 @@
+{
+  "name": "Advance AI-Powered Lead Management System",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "29a85488-a962-4e9d-",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -480,
+        384
+      ],
+      "id": "785530d6-9a13-4fbc-9316-9cb8bc5dd032",
+      "name": "Webhook",
+      "webhookId": "29a85488-a962-4e9d-84b8-dfcaab035a51"
+    },
+    {
+      "parameters": {
+        "respondWith": "allIncomingItems",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        -256,
+        288
+      ],
+      "id": "6599b3cb-c05c-47d7-bda2-155ee5f672b4",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        1392,
+        608
+      ],
+      "id": "f6753f72-2a90-4e64-bf32-8ac408d707b9",
+      "name": "OpenAI Chat Model",
+      "notesInFlow": false,
+      "credentials": {
+        "openAiApi": {
+          "id": "OLBnKcO5JqAofOQA",
+          "name": "OpenAI freemodel API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"subject\": \"Welcome to our AI-Vibe SaaS Platform!\",\n  \"html_body\": \"<p>Hi Jhon Deo,</p><br><br><p>Thank you for your interest in AI Automation. We are thrilled to have you onboard.</p><br><br><p>Best Regards,</p><p><b>The Automation Team</b></p>\"\n}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1600,
+        608
+      ],
+      "id": "41e0b3c9-7592-4cb0-80fe-e6ae968f4e7e",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('If').item.json.email }}",
+        "subject": "={{ $json.output.subject }}",
+        "message": "={{ $json.output.html_body }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        384
+      ],
+      "id": "3059a310-be6f-4ae5-aee9-08d8e86ef7a4",
+      "name": "Send a message",
+      "webhookId": "0d054f79-de4e-4a7c-b161-bd4e58f98713",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "notesInFlow": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qjmlZtUs1tSwtxq0",
+          "name": "Gmail Aivibe"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "text": "=🚀 *New Lead Alert!*\nA new lead just signed up from our \"Scale Your Business with AI-Vibe\" form!\n\n👤 *Name:* {{ $json.name }}\n📧 *Email:* {{ $json.email }}\n🎯 *Interest:* {{ $json.interest }}\n\n*Email Status:* A personalized AI welcome email has been successfully sent to them via Gmail. ✅",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        2144,
+        176
+      ],
+      "id": "a3ef8509-9839-4756-93d3-22224dcb6417",
+      "name": "Success Lead Notifier",
+      "webhookId": "21adcec2-9f5f-4692-a267-9c89d4b77f37",
+      "credentials": {
+        "slackApi": {
+          "id": "6ycnEN4rHxPOYE5J",
+          "name": "Slack Lead Notifier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "text": "=🚨 *URGENT: AI Generation Failed!*\nThe system tried 3 times but the AI Chat Model failed to generate the email.\n\n👤 *Name:* {{ $json.name }}\n📧 *Email:* {{ $json.email }}\n🎯 *Interest:* {{ $json.interest }}\n\n*Action Required:* Please check the OpenAI API key, credit balance, or model connection in n8n.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        2160,
+        816
+      ],
+      "id": "83a75e2f-8cee-4fa5-9d74-5ddb79faf3ae",
+      "name": "AI Generation Failed Lead Notifier",
+      "webhookId": "21adcec2-9f5f-4692-a267-9c89d4b77f37",
+      "credentials": {
+        "slackApi": {
+          "id": "6ycnEN4rHxPOYE5J",
+          "name": "Slack Lead Notifier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "text": "=🚨 *URGENT: Email Delivery Failed!*\n\nThe system tried 3 times but couldn't send the welcome email. Please check the Gmail connection.",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        2144,
+        400
+      ],
+      "id": "668fbbd3-505c-4e9e-9f11-7efb5029cf34",
+      "name": "Email Delivery Failed Lead Notifier",
+      "webhookId": "21adcec2-9f5f-4692-a267-9c89d4b77f37",
+      "credentials": {
+        "slackApi": {
+          "id": "6ycnEN4rHxPOYE5J",
+          "name": "Slack Lead Notifier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 10
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -464,
+        688
+      ],
+      "id": "31bc6ee2-70ce-4502-8757-d3d5547899a5",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -16,
+        688
+      ],
+      "id": "2a930277-6420-4c06-af87-59e444d2e66a",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Sent"
+            },
+            {
+              "fieldId": "sent_at",
+              "fieldValue": "={{ $now }}"
+            },
+            {
+              "fieldId": "ai_email_draft",
+              "fieldValue": "={{ $('Lead Man. AI Agent').item.json.output.subject }}\n\n{{ $('Lead Man. AI Agent').item.json.output.html_body }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        176
+      ],
+      "id": "3f07c5fb-9859-4c21-8d1d-858c506758b4",
+      "name": "Gmail Sent Update",
+      "credentials": {
+        "supabaseApi": {
+          "id": "OxlErm6Dm2JLi2ir",
+          "name": "Advance AI-Powered Lead Management System"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Failed"
+            },
+            {
+              "fieldId": "error_log",
+              "fieldValue": "=🚨 *URGENT: Email Delivery Failed!* \nThe system tried 3 times but couldn't send the welcome email. Please check the Gmail connection."
+            },
+            {
+              "fieldId": "drafted_at",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1936,
+        400
+      ],
+      "id": "11c38ce5-d015-41e3-84d3-44011e6f6b86",
+      "name": "Failed Gmail Sent Update "
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Failed"
+            },
+            {
+              "fieldId": "error_log",
+              "fieldValue": "=🚨 *URGENT: AI Generation Failed!*\n\nThe system tried 3 times but the AI Chat Model failed to generate the email.\n\n*Action Required:* Please check the OpenAI API key, credit balance, or model connection in n8n."
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        816
+      ],
+      "id": "980a9f44-59d8-49a9-a89d-b219b053fe12",
+      "name": "AI Generation Failed Update "
+    },
+    {
+      "parameters": {
+        "amount": 7
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2352,
+        400
+      ],
+      "id": "bac77b00-8858-49d9-9487-2ff884c9cb46",
+      "name": "Wait 7 Seconds",
+      "webhookId": "4b7c4517-58ff-489e-bea1-748dcb95b5f5"
+    },
+    {
+      "parameters": {
+        "unit": "minutes"
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2368,
+        816
+      ],
+      "id": "278fe13a-e80c-47ab-8d45-db6449faab6f",
+      "name": "Wait 5 Minutes",
+      "webhookId": "bffbf78e-68a5-4b44-8a31-397a396370fe"
+    },
+    {
+      "parameters": {
+        "amount": 10
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2352,
+        176
+      ],
+      "id": "d28d93a8-a166-4f0f-9dcb-1c650d219ee7",
+      "name": "Wait 10 Seconds",
+      "webhookId": "763a73b5-9cbf-4caa-a1bb-7168cf474ed7"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1184,
+        400
+      ],
+      "id": "28799da1-224d-4d8f-baf8-338b2eec9bd9",
+      "name": "Wait 5 Seconds",
+      "webhookId": "b7bd743f-035f-4272-be0e-75bb20187e07"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "leads",
+        "matchType": "allFilters",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "status",
+              "condition": "eq",
+              "keyValue": "Pending"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        688
+      ],
+      "id": "3ca29b3d-5c61-4c0a-ae7e-3d9394de818f",
+      "name": "Get 50 Leads"
+    },
+    {
+      "parameters": {
+        "tableId": "leads",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "name",
+              "fieldValue": "={{ $json.body.data.fields[0].value }}"
+            },
+            {
+              "fieldId": "email",
+              "fieldValue": "={{ $json.body.data.fields[1].value }}"
+            },
+            {
+              "fieldId": "interest",
+              "fieldValue": "={{   (() => {     let field = $json.body.data.fields[2];          if (!field || !field.value || field.value.length === 0) {         return \"Not Provided\";     }      let val = field.value[0];     let matched = field.options ? field.options.find(item => item.id === val) : null;          if (matched)          {         if (matched.isOtherOption && field.value.length > 1) {             return field.value[1];         }         return matched.text;     }          return val;   })() }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        496
+      ],
+      "id": "b3991664-c09b-4c15-80a3-504461aacdbf",
+      "name": "Index New Lead "
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Role: \nYou are a highly professional and friendly Customer Success Manager at an innovative SaaS company.\n\nContext: \nWe have just received a new lead from our \"Scale Your Business with AI-Vibe\" form. \n\n- Lead Name: {{ $json.name }}\n- Lead Email: {{ $json.email }}\n- Primary Interest: {{ $json.interest }}\nTask: \nWrite a highly personalized, warm, and engaging welcome email to this new lead. The goal is to make them feel valued and instantly build a connection based on their specific interest.\n\nStrict Guidelines:\n1. Greet the person using \"Hi\" or \"Hello\" instead of \"Dear\" (e.g., \"Hi {{ $json.name }},\").\n2. Explicitly mention their specific area of interest ({{ $json.interest }}) in the first few lines.\n3. Briefly explain that our SaaS platform has the perfect tools and features to help them excel in {{ $json.interest }}.\n4. Tone: Professional, welcoming, human-like, and not overly salesy.\n5. Length: Keep it concise (under 100-120 words).\n6. Formatting: Format the body using clean HTML tags (like <br><br> for line breaks and <b> for emphasis). Output the response according to the required JSON schema.\n7. Call to Action: End by encouraging them to reply to this email if they have any immediate questions.\n8. Sign-off: Use \"AI-Vibe Automation Team\".\n\n",
+        "hasOutputParser": true,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        1424,
+        400
+      ],
+      "id": "b173e771-e997-4c3e-9d60-c6dabc849e77",
+      "name": "Lead Man. AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "filters": {
+          "q": "subject:(\"Delivery Status Notification\" OR \"Undelivered Mail Returned\" OR \"Mail delivery failed\")"
+        }
+      },
+      "id": "ead19036-f1c4-4068-8c3b-c0a8578ca4d3",
+      "name": "Gmail Trigger — Watch Bounces",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        160,
+        96
+      ],
+      "notes": "এটা আলাদা workflow-এর trigger। Gmail inbox monitor করবে bounce মেসেজের জন্য।"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.snippet || $input.item.json.body || '';\n\n// Email address extract regex\nconst emailRegex = /[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}/g;\nconst found = body.match(emailRegex) || [];\n\n// Sender\nconst senderEmail = 'YOUR_GMAIL_ADDRESS';\nconst bouncedEmails = found.filter(e => e !== senderEmail);\n\nreturn [{\n  json: {\n    bounced_email: bouncedEmails[0] || null,\n    raw_snippet: body.slice(0, 300)\n  }\n}];"
+      },
+      "id": "838611cf-830a-4c97-9dcd-c0c8336d335f",
+      "name": "Extract Bounced Email",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        96
+      ],
+      "notes": "Bounce notification email থেকে failed email address টা extract করে। YOUR_GMAIL_ADDRESS নিজের email দিয়ে replace করো।"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "conditions": [
+            {
+              "id": "condition-not-null",
+              "leftValue": "={{ $json.bounced_email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and",
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          }
+        },
+        "options": {}
+      },
+      "id": "8471d3db-ac42-46f3-9f16-7a793ba2268f",
+      "name": "Bounced Email Found?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        624,
+        96
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "C0B8FGA12PJ",
+          "mode": "id"
+        },
+        "text": "=🚨 *Email Bounce Alert!* \nAn email we tried to send just bounced back and could not be delivered. 🛑 \n\n👤 *Name:* {{ $json.name }} \n📧 *Email:* {{ $json.email }} \n🎯 *Interest:* {{ $json.interest }} \n❌ *Issue:* Hard Bounce / Delivery Failed  \n\n*Action Taken:* The lead's status has been automatically updated to `Bounced` in our Supabase database. This ensures we won't attempt to email them again, keeping our Gmail sender reputation safe! 🛡️",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "id": "8d3f3913-d315-4d9a-9c63-b74af83ba9fc",
+      "name": "Slack — Bounce Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.2,
+      "position": [
+        1120,
+        80
+      ],
+      "webhookId": "d52ebc0c-36a2-4525-8ded-ba0e84921925",
+      "notes": "Bounce হলে Slack-এ alert যাবে। channel নাম নিজের মতো বদলে নাও।"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "id",
+              "condition": "eq",
+              "keyValue": "={{ $('Loop Over Items').item.json.id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Invalid Email"
+            },
+            {
+              "fieldId": "error_log",
+              "fieldValue": "Invalid Lead Blocked!  Verification Status: Invalid & Bounce Risk "
+            },
+            {
+              "fieldId": "verified_at",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        768
+      ],
+      "id": "3d05e830-0c23-4567-9537-8669ca7da18c",
+      "name": "Invalid Email Update"
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "text": "=⚠️ *Invalid Lead Blocked!*\nOur verification system just caught a fake or unreachable email address. 🛡️\n\n👤 *Name:* {{ $json.name }}\n📧 *Email:* {{ $json.email }}\n🎯 *Interest:* {{ $json.interest }}\n❌ *Verification Status:* Invalid / Bounce Risk\n\n*Action Taken:* The lead's status has been automatically updated to `Invalid` in Supabase. AI generation and Gmail sending were skipped to save API credits and protect our domain reputation! 🚀",
+        "otherOptions": {
+          "includeLinkToWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.4,
+      "position": [
+        1520,
+        768
+      ],
+      "id": "b6f1c851-19bf-4c26-965d-172945297391",
+      "name": "Invalid Email Lead Notifier",
+      "webhookId": "21adcec2-9f5f-4692-a267-9c89d4b77f37",
+      "credentials": {
+        "slackApi": {
+          "id": "6ycnEN4rHxPOYE5J",
+          "name": "Slack Lead Notifier"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "leads",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "email",
+              "condition": "eq",
+              "keyValue": "={{ $('Extract Bounced Email').item.json.bounced_email }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "Bounced"
+            },
+            {
+              "fieldId": "error_log",
+              "fieldValue": "Email Bounce Alert!\nAn email we tried to send just bounced back and could not be delivered."
+            },
+            {
+              "fieldId": "verified_at",
+              "fieldValue": "={{ $now }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        896,
+        80
+      ],
+      "id": "bd9bde19-cd3f-4060-9cfc-59d2e6733ce2",
+      "name": "Bounced Invalid Email Update"
+    },
+    {
+      "parameters": {
+        "content": "Backup\n\nEmail Bounce Alert!",
+        "height": 272,
+        "width": 1328,
+        "color": "#216582"
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0477e624-67b0-4a79-8ef9-31e3460dec7d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "jsCode": "const DISPOSABLE = new Set([\n  'mailinator.com','10minutemail.com','guerrillamail.com',\n  'throwaway.email','tempmail.com','yopmail.com','trashmail.com',\n  'maildrop.cc','temp-mail.org','fakeinbox.com','discard.email',\n  'spamgourmet.com','trashmail.me','trashmail.net','getairmail.com',\n  'sharklasers.com','spam4.me','dispostable.com','mailnull.com'\n]);\n\nconst ROLE_BASED = new Set([\n  'info','support','admin','sales','contact','noreply','no-reply',\n  'postmaster','webmaster','abuse','help','billing','marketing',\n  'hello','donotreply','do-not-reply','newsletter','feedback',\n  'notifications','bounce','security','privacy','team','office'\n]);\n\nconst EMAIL_REGEX = /^[a-zA-Z0-9._%+\\-]+@[a-zA-Z0-9.\\-]+\\.[a-zA-Z]{2,}$/;\n\nconst email = ($json.email || '').trim().toLowerCase();\n\n// Empty check\nif (!email) {\n  return [{ json: { ...$json, email_status: 'invalid', email_reason: 'empty_email', domain: null } }];\n}\n\n// Layer 1: Syntax\nif (!EMAIL_REGEX.test(email)) {\n  return [{ json: { ...$json, email_status: 'invalid', email_reason: 'bad_syntax', domain: null } }];\n}\n\nconst atIndex = email.lastIndexOf('@');\nconst local  = email.slice(0, atIndex);\nconst domain = email.slice(atIndex + 1);\n\n// Layer 2: Disposable domain\nif (DISPOSABLE.has(domain)) {\n  return [{ json: { ...$json, email_status: 'invalid', email_reason: 'disposable_domain', domain } }];\n}\n\n// Layer 3: Role-based prefix\nif (ROLE_BASED.has(local)) {\n  return [{ json: { ...$json, email_status: 'risky', email_reason: 'role_based', domain } }];\n}\n\n// Passed all basic checks — send to MX check\nreturn [{ json: { ...$json, email_status: 'check_mx', email_reason: 'basic_passed', domain } }];"
+      },
+      "id": "13b010ac-9266-4e93-804e-054307c39c87",
+      "name": "Layer 1-3: Syntax + Disposable + Role",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        672
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://web-production-d4a73b.up.railway.app/check",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"email\": \"={{ $json.email }}\"\n}",
+        "options": {}
+      },
+      "id": "a3b0ece8-0782-4773-b7ab-3acb511d1f31",
+      "name": "Layer 5: Railway API — SMTP Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        656,
+        672
+      ],
+      "notes": "Railway deploy হলে URL replace করো। verify-app.py-তে /check endpoint add করতে হবে।"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "id": "cond-smtp",
+              "leftValue": "={{ $json.status }}",
+              "rightValue": "valid",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "04d458f4-e79e-4664-b4b2-220e917e6434",
+      "name": "SMTP Result — Valid?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        864,
+        672
+      ],
+      "notes": "True → Switch Node (industry routing). False → Supabase mark invalid."
+    },
+    {
+      "parameters": {
+        "url": "https://dns.google/resolve",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "name",
+              "value": "={{ $json.domain }}"
+            },
+            {
+              "name": "type",
+              "value": "MX"
+            }
+          ]
+        },
+        "options": {
+          "timeout": 8000
+        }
+      },
+      "id": "d75f80e4-c326-4b49-a527-9963271190c7",
+      "name": "Layer 4: Google DNS — MX Check",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        464,
+        672
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1344,
+        768
+      ],
+      "id": "afacb31b-99f4-4e87-9f37-5fdf9cde11b4",
+      "name": "Wait",
+      "webhookId": "f24d370c-5895-44ef-af42-825f8418620b"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Index New Lead ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Lead Man. AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Lead Man. AI Agent",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        [
+          {
+            "node": "Gmail Sent Update",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Failed Gmail Sent Update ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Success Lead Notifier": {
+      "main": [
+        [
+          {
+            "node": "Wait 10 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Generation Failed Lead Notifier": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Minutes",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email Delivery Failed Lead Notifier": {
+      "main": [
+        [
+          {
+            "node": "Wait 7 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get 50 Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Layer 1-3: Syntax + Disposable + Role",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Sent Update": {
+      "main": [
+        [
+          {
+            "node": "Success Lead Notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Failed Gmail Sent Update ": {
+      "main": [
+        [
+          {
+            "node": "Email Delivery Failed Lead Notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Generation Failed Update ": {
+      "main": [
+        [
+          {
+            "node": "AI Generation Failed Lead Notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 7 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 10 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait 5 Seconds": {
+      "main": [
+        [
+          {
+            "node": "Lead Man. AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get 50 Leads": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lead Man. AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Generation Failed Update ",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail Trigger — Watch Bounces": {
+      "main": [
+        [
+          {
+            "node": "Extract Bounced Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Bounced Email": {
+      "main": [
+        [
+          {
+            "node": "Bounced Email Found?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bounced Email Found?": {
+      "main": [
+        [
+          {
+            "node": "Bounced Invalid Email Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invalid Email Update": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Invalid Email Lead Notifier": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bounced Invalid Email Update": {
+      "main": [
+        [
+          {
+            "node": "Slack — Bounce Alert",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Layer 1-3: Syntax + Disposable + Role": {
+      "main": [
+        [
+          {
+            "node": "Layer 4: Google DNS — MX Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Layer 5: Railway API — SMTP Check": {
+      "main": [
+        [
+          {
+            "node": "SMTP Result — Valid?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SMTP Result — Valid?": {
+      "main": [
+        [
+          {
+            "node": "Wait 5 Seconds",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Invalid Email Update",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Layer 4: Google DNS — MX Check": {
+      "main": [
+        [
+          {
+            "node": "Layer 5: Railway API — SMTP Check",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Invalid Email Lead Notifier",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "62c6d98e-7f86-4da2-80b6-4bbcb0ce4c71",
+  "meta": {
+    "instanceId": "5f00bba974abf03cb5183d4d65f8a9645a781b04770df6a7d08284fca87d50b3"
+  },
+  "nodeGroups": [],
+  "id": "pww3Lx0gzoTuPMEz",
+  "tags": []
+}
