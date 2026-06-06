@@ -150,13 +150,18 @@ After importing, you will need to reconnect the following nodes to your own cred
 * `OpenAiApi`
 * `GmailOAuth2`
 * `SlackApi`
+### ⚙️ Environment Variables & Custom API Setup
 
-### Environment Variables
-Ensure the **Layer 5: Railway API — SMTP Check** HTTP node is pointing to your active verification API URL:
+This n8n workflow relies on a custom Flask API to perform the Layer 5 deep SMTP verification. You need to deploy this API to a cloud platform (like Railway) before running the workflow.
+
+👉 **[Click here to get the Email Verifier API & Setup Guide](https://github.com/ubachan/Email-Verifier-API)**
+
+Once your API is successfully deployed, open the n8n workflow and ensure the **Layer 5: Railway API — SMTP Check** HTTP Request node is pointing to your active verification API URL:
+
 ```text
 [https://YOUR-APP-NAME.up.railway.app/check](https://YOUR-APP-NAME.up.railway.app/check)
 ```
-
+ 
 ## 🤝 Contribution
 Feel free to fork this repository and submit pull requests. For major changes, please open an issue first to discuss what you would like to change.
 
